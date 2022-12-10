@@ -26,13 +26,8 @@ public class PlayerController : MonoBehaviour
     bool shouldJump = false;
 
     Animator animator;
-    public string stopAnime = "PlayerStop";
-    public string moveAnime = "PlayerMove";
-    public string jumpAnime = "PlayerJump";
-    public string goalAnime = "PlayerGoal";
-    public string deadAnime = "PlayerOver";
-    string currentAnime = "";
-    string prevAnime = "";
+    AnimationClipName currentAnime = AnimationClipName.PlayerStop;
+    AnimationClipName prevAnime = AnimationClipName.PlayerStop;
 
     float axisH = 0.0f;
 
@@ -41,9 +36,6 @@ public class PlayerController : MonoBehaviour
     {
         rbody = this.GetComponent<Rigidbody2D>();
         animator = this.GetComponent<Animator>();
-
-        currentAnime = stopAnime;
-        prevAnime = stopAnime;
     }
 
     // Update is called once per frame
@@ -90,20 +82,20 @@ public class PlayerController : MonoBehaviour
         {
             if(axisH == 0)
             {
-                currentAnime = stopAnime;
+                currentAnime = AnimationClipName.PlayerStop;
             }
             else
             {
-                currentAnime = moveAnime;
+                currentAnime = AnimationClipName.PlayerMove;
             }
         }
         else
         {
-            currentAnime = jumpAnime;
+            currentAnime = AnimationClipName.PlayerJump;
         }
         if(currentAnime != prevAnime)
         {
-            animator.Play(currentAnime);
+            animator.Play(currentAnime.ToString());
             prevAnime = currentAnime;
         }
         
@@ -131,11 +123,11 @@ public class PlayerController : MonoBehaviour
 
     void Goal()
     {
-        animator.Play(goalAnime);
+        animator.Play(AnimationClipName.PlayerGoal.ToString());
     }
 
     void GameOver()
     {
-        animator.Play(deadAnime);
+        animator.Play(AnimationClipName.PlayerOver.ToString());
     }
 }
