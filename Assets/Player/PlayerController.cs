@@ -11,6 +11,13 @@ enum AnimationClipName
     PlayerOver
 }
 
+public enum GameStatus {
+    Playing,
+    GameCleared,
+    GameOver,
+    GameFinished
+}
+
 public class PlayerController : MonoBehaviour
 {
 
@@ -29,6 +36,8 @@ public class PlayerController : MonoBehaviour
     AnimationClipName currentAnime = AnimationClipName.PlayerStop;
     AnimationClipName prevAnime = AnimationClipName.PlayerStop;
 
+    public static GameStatus gameStatus = GameStatus.Playing;
+
     float axisH = 0.0f;
 
     // Start is called before the first frame update
@@ -41,6 +50,12 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(gameStatus != GameStatus.Playing)
+        {
+            return; // Do nothing if the game is not in a playing status.
+        }
+
+
         axisH = Input.GetAxis("Horizontal");
 
         if(axisH > 0)
@@ -62,6 +77,13 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate() {
 
+        if(gameStatus != GameStatus.Playing)
+        {
+            return; // Do nothing if the game is not in a playing status.
+        }
+
+
+        // Check if the player is on the ground
         isOnGround = Physics2D.Linecast(transform.position, transform.position - (transform.up * 0.1f), groundLayer);
 
         if(isOnGround || axisH != 0)
@@ -102,8 +124,9 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
+        Debug.Log("Collision with " + collision.gameObject.tag);
         switch (collision.gameObject.tag)
         {
             case "Goal":
@@ -123,11 +146,35 @@ public class PlayerController : MonoBehaviour
 
     void Goal()
     {
+        Debug.Log("Goal");
         animator.Play(AnimationClipName.PlayerGoal.ToString());
+        gameStatus = GameStatus.GameCleared;
+        GameStop();
+
     }
 
     void GameOver()
     {
+        Debug.Log("Game Over");
+
+        if(gameStatus == GameStatus.GameCleared){
+          Debug.Log("Game Over effect was cancelled due to the game already cleared.");
+            return; // Do nothing if the game is already cleared.
+        }
+
         animator.Play(AnimationClipName.PlayerOver.ToString());
+        gameStatus = GameStatus.GameOver;
+        GameStop();
+
+        // Show GameOver effect
+        // Disable player collider
+        CapsuleCollider2D playerCollider2d = this.GetComponent<CapsuleCollider2D>();
+        playerCollider2d.enabled = false;
+        rbody.AddForce(Vector2.up * 5.0f, ForceMode2D.Impulse);
+    }
+
+    void GameStop(){
+      Debug.Log("Game Stopped");
+      rbody.velocity = new Vector2(0, 0); // Force player to stop
     }
 }
