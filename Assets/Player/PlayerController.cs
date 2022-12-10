@@ -2,6 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+enum AnimationClipName
+{
+    PlayerStop,
+    PlayerMove,
+    PlayerJump,
+    PlayerGoal,
+    PlayerOver
+}
+
 public class PlayerController : MonoBehaviour
 {
 
@@ -16,12 +25,25 @@ public class PlayerController : MonoBehaviour
     bool isOnGround = false;
     bool shouldJump = false;
 
+    Animator animator;
+    public string stopAnime = "PlayerStop";
+    public string moveAnime = "PlayerMove";
+    public string jumpAnime = "PlayerJump";
+    public string goalAnime = "PlayerGoal";
+    public string deadAnime = "PlayerOver";
+    string currentAnime = "";
+    string prevAnime = "";
+
     float axisH = 0.0f;
 
     // Start is called before the first frame update
     void Start()
     {
         rbody = this.GetComponent<Rigidbody2D>();
+        animator = this.GetComponent<Animator>();
+
+        currentAnime = stopAnime;
+        prevAnime = stopAnime;
     }
 
     // Update is called once per frame
@@ -63,13 +85,57 @@ public class PlayerController : MonoBehaviour
             shouldJump = false;
         }
 
+        // Set next animation
+        if (isOnGround)
+        {
+            if(axisH == 0)
+            {
+                currentAnime = stopAnime;
+            }
+            else
+            {
+                currentAnime = moveAnime;
+            }
+        }
+        else
+        {
+            currentAnime = jumpAnime;
+        }
+        if(currentAnime != prevAnime)
+        {
+            animator.Play(currentAnime);
+            prevAnime = currentAnime;
+        }
+        
 
+    }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Goal":
+                Goal();
+                break;
+            case "Dead":
+                GameOver();
+                break;
+        }
     }
 
     void Jump()
     {
         shouldJump = true;
         Debug.Log("An certain jump force will exert on Player on a next fixedUpdate execution.");
+    }
+
+    void Goal()
+    {
+        animator.Play(goalAnime);
+    }
+
+    void GameOver()
+    {
+        animator.Play(deadAnime);
     }
 }
