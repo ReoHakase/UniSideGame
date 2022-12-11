@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum GameSceneName {
-  Stage1
+  Stage1,
+  Stage2,
+  Stage3
 }
 
 public class SceneManager : MonoBehaviour
