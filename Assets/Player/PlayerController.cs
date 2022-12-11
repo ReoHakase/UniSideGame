@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     {
         rbody = this.GetComponent<Rigidbody2D>();
         animator = this.GetComponent<Animator>();
+        gameStatus = GameStatus.Playing;
     }
 
     // Update is called once per frame
