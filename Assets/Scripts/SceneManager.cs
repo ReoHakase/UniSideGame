@@ -2,28 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GameSceneName {
+public enum GameSceneName
+{
   Stage1,
   Stage2,
-  Stage3
+  Stage3,
+  Title,
+  Result
 }
 
 public class SceneManager : MonoBehaviour
 {
-    public GameSceneName currentGameScene = GameSceneName.Stage1;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+  public GameSceneName currentGameScene = GameSceneName.Stage1;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  // Start is called before the first frame update
+  void Start() { }
 
-    public void Load(){
-      UnityEngine.SceneManagement.SceneManager.LoadScene(currentGameScene.ToString());
-    }
+  // Update is called once per frame
+  void Update() { }
+
+  public void Load()
+  {
+    UnityEngine.SceneManagement.SceneManager.LoadScene(
+      currentGameScene.ToString()
+    );
+  }
 }
